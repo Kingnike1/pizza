@@ -304,3 +304,95 @@ button:hover {
         opacity: 1;
     }
 }
+
+/* Media Queries para Responsividade */
+
+/* Para telas menores que 768px */
+@media (max-width: 768px) {
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
+
+    button {
+        font-size: 14px;
+        padding: 8px 12px;
+    }
+
+    .counter {
+        font-size: 20px;
+    }
+
+    .player {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .progress-bar-container {
+        width: 100%;
+    }
+
+    .progress-bar {
+        height: 15px;
+    }
+
+    #iniciarJogador {
+        width: 80%;
+        max-width: none;
+    }
+
+    .player-avatar {
+        width: 35px;
+        height: 35px;
+    }
+
+    #avatarModal h2 {
+        font-size: 20px;
+    }
+
+    .avatar-option i {
+        font-size: 25px;
+    }
+}
+
+/* Para telas menores que 480px */
+@media (max-width: 480px) {
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
+
+    button {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .counter {
+        font-size: 18px;
+    }
+
+    .progress-bar-container {
+        height: 12px;
+    }
+
+    .progress-bar {
+        height: 12px;
+    }
+
+    #iniciarJogador {
+        width: 100%;
+    }
+
+    .player-avatar {
+        width: 30px;
+        height: 30px;
+    }
+
+    #avatarModal h2 {
+        font-size: 18px;
+    }
+
+    .avatar-option i {
+        font-size: 20px;
+    }
+}
