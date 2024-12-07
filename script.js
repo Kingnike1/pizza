@@ -12,6 +12,8 @@ const avatarGallery = document.getElementById('avatarGallery');
 const customAvatarInput = document.getElementById('customAvatar');
 
 // Adicionar jogador
+// Adicionar jogador
+// Adicionar jogador
 addPlayerButton.addEventListener('click', () => {
     const nome = prompt("Digite o nome do jogador:");
     if (nome) {
@@ -43,6 +45,8 @@ addPlayerButton.addEventListener('click', () => {
     }
 });
 
+
+
 // Reiniciar o contador
 resetButton.addEventListener('click', () => {
     jogadores = [];
@@ -51,6 +55,7 @@ resetButton.addEventListener('click', () => {
     atualizarInterface();
 });
 
+// Atualizar interface
 // Atualizar interface
 function atualizarInterface() {
     // Limpa os jogadores e recria
@@ -69,8 +74,12 @@ function atualizarInterface() {
         // Criar o jogador e sua barra de progresso
         const playerDiv = document.createElement('div');
         playerDiv.classList.add('player');
+        
+        // Use um ícone do Font Awesome como avatar
+        const avatarIcon = jogador.avatar || "fa-user"; // Definir um ícone padrão caso não tenha avatar
+        
         playerDiv.innerHTML = `
-            <img src="${jogador.avatar}" alt="Avatar de ${jogador.nome}" class="player-avatar">
+            <i class="fas ${avatarIcon} player-avatar"></i> <!-- Usando o ícone do Font Awesome -->
             <span>${jogador.nome}: ${jogador.contador} pedaços</span>
             <button onclick="adicionarPeca(${index})">+1</button>
             <div class="progress-bar-container">
@@ -89,6 +98,7 @@ function atualizarInterface() {
         leaderDiv.textContent = "Ninguém está ganhando ainda!";
     }
 }
+
 
 // Adicionar pedaço para um jogador
 function adicionarPeca(index) {

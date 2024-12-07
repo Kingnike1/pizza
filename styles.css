@@ -8,6 +8,22 @@
     }
 }
 
+/* Animação de barra de progresso */
+@keyframes progressAnimation {
+    from {
+        width: 0%;
+    }
+    to {
+        width: 100%;
+    }
+}
+
+/* Estilo comum para animação fadeIn */
+.fade-in {
+    animation: fadeIn 2s ease-in-out;
+}
+
+/* Estilo geral para o body */
 body {
     font-family: Arial, sans-serif;
     text-align: center;
@@ -15,7 +31,6 @@ body {
     color: white;
     margin: 0;
     padding: 0;
-    animation: fadeIn 2s ease-in-out; /* Animação de entrada */
 }
 
 /* Container principal */
@@ -26,10 +41,13 @@ body {
     border-radius: 15px;
     max-width: 500px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
-    animation: fadeIn 2s ease-in-out; /* Animação para o container */
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    animation: fadeIn 2s ease-in-out;
 }
 
-/* Botões */
+/* Estilo dos botões */
 button {
     padding: 10px 15px;
     margin: 10px 5px;
@@ -40,19 +58,19 @@ button {
     border-radius: 5px;
     cursor: pointer;
     transition: 0.3s;
-    animation: fadeIn 2s ease-in-out; /* Animação para os botões */
+    animation: fadeIn 2s ease-in-out;
 }
 
 button:hover {
     background: #5e35b1; /* Cor roxa mais escura para o hover */
-    transform: scale(1.1); /* Efeito de aumentar o botão ao passar o mouse */
+    transform: scale(1.1);
 }
 
-/* Contadores */
+/* Estilo dos contadores */
 .counter {
     font-size: 24px;
     margin: 20px 0;
-    animation: fadeIn 2s ease-in-out; /* Animação de contadores */
+    animation: fadeIn 2s ease-in-out;
 }
 
 /* Estilo dos jogadores */
@@ -65,19 +83,10 @@ button:hover {
     margin: 10px 0;
     border-radius: 10px;
     color: white;
-    animation: fadeIn 2s ease-in-out; /* Animação para jogadores */
+    animation: fadeIn 2s ease-in-out;
 }
 
 /* Barra de progresso */
-@keyframes progressAnimation {
-    from {
-        width: 0%;
-    }
-    to {
-        width: 100%;
-    }
-}
-
 .progress-bar-container {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 5px;
@@ -92,18 +101,20 @@ button:hover {
     height: 100%;
     width: 0;
     transition: width 0.3s ease-out;
-    animation: progressAnimation 2s forwards; /* Animação para a barra de progresso */
+    animation: progressAnimation 2s forwards;
     border-radius: 5px;
 }
 
+/* Estilo do líder */
 .leader {
     font-size: 20px;
     margin: 20px 0;
     font-weight: bold;
     color: #fff;
-    animation: fadeIn 2s ease-in-out; /* Animação para o líder */
+    animation: fadeIn 2s ease-in-out;
 }
 
+/* Tempo de competição */
 #tempoCompeticao {
     font-size: 20px;
     color: #fff;
@@ -126,12 +137,10 @@ button:hover {
     transition: background 0.3s ease;
 }
 
-/* Estilo para o hover do select */
 #iniciarJogador:hover {
     background: #ff7300; /* Laranja mais intenso para o hover */
 }
 
-/* Estilo para as opções dentro do select */
 #iniciarJogador option {
     background: #ff914d; /* Cor de fundo laranja */
     color: white;
@@ -139,13 +148,12 @@ button:hover {
     border: none;
 }
 
-/* Estilo para o select quando estiver em foco */
 #iniciarJogador:focus {
     outline: none;
     border: 2px solid #ff7300; /* Cor laranja intensa para o foco */
 }
 
-/* Adicionando estilo para os avatares */
+/* Estilo dos avatares */
 .player-avatar {
     width: 40px;
     height: 40px;
@@ -184,16 +192,14 @@ button:hover {
     margin-top: 10px;
 }
 
-/* Outras melhorias no layout */
-.container {
+/* Organização de layout e alinhamento */
+.container, .player {
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px;
 }
 
 .player {
-    display: flex;
     align-items: center;
     margin-bottom: 10px;
 }

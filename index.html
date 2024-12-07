@@ -5,7 +5,11 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Contador Competitivo de Pizza</title>
         <link rel="stylesheet" href="styles.css">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+        <!-- Link para o Font Awesome -->
     </head>
+
     <body>
         <div class="container">
             <h1>Contador Competitivo de Pedaços de Pizza</h1>
@@ -24,13 +28,21 @@
             <div id="avatarModal" style="display: none;">
                 <h2>Escolha seu Avatar</h2>
                 <div id="avatarGallery">
-                    <img src="./img/avatar1.jpeg" alt="Avatar 1" class="avatar-option" data-avatar="avatar1.png">
-                    <img src="./img/avatar2.png" alt="Avatar 2" class="avatar-option" data-avatar="avatar2.png">
-                    <img src="./img/avatar3.jpg" alt="Avatar 3" class="avatar-option" data-avatar="avatar3.png">
+                    <div class="avatar-option" data-avatar="fa-user">
+                        <i class="fas fa-user"></i> <!-- Ícone de usuário -->
+                    </div>
+                    <div class="avatar-option" data-avatar="fa-pizza-slice">
+                        <i class="fas fa-pizza-slice"></i>
+                        <!-- Ícone de fatia de pizza -->
+                    </div>
+                    <div class="avatar-option" data-avatar="fa-robot">
+                        <i class="fas fa-robot"></i> <!-- Ícone de robô -->
+                    </div>
                     <input type="file" id="customAvatar" accept="image/*" />
                 </div>
                 <button onclick="closeAvatarModal()">Fechar</button>
             </div>
+
         </div>
         <script src="script.js"></script>
     </body>
