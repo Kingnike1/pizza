@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Contador Competitivo de Pizza</title>
+        <link rel="stylesheet" href="styles.css">
+    </head>
+    <body>
+        <div class="container">
+            <h1>Contador Competitivo de Pedaços de Pizza</h1>
+
+            <!-- Seção para o líder -->
+            <div class="leader" id="leader">Ninguém está ganhando ainda!</div>
+
+            <!-- Seção para escolher o jogador que vai começar -->
+            <label for="iniciarJogador">Escolha quem começa: </label>
+            <select id="iniciarJogador">
+                <option value="">Selecione um jogador</option>
+            </select>
+
+            <!-- Botão para iniciar o modo competição -->
+            <button id="modoCompeticaoBtn">Iniciar Modo Competição</button>
+
+            <!-- Exibição dos jogadores -->
+            <div id="players"></div>
+
+            <!-- Botões para adicionar jogador e reiniciar a contagem -->
+            <button id="addPlayer">Adicionar Jogador</button>
+            <button id="reset">Reiniciar Contagem</button>
+
+            <!-- Exibição do tempo de competição -->
+            <div id="tempoCompeticao"></div>
+        </div>
+        <script src="script.js"></script>
+    </body>
+</html>
