@@ -1,22 +1,45 @@
 // Dados iniciais
-let jogadores = [];
-let totalPizzas = 0;
+let jogadores = JSON.parse(localStorage.getItem('jogadores')) || [];
+let totalPizzas = parseInt(localStorage.getItem('totalPizzas')) || 0;
 
 // Elementos da página
 const playersDiv = document.getElementById('players');
 const addPlayerButton = document.getElementById('addPlayer');
 const resetButton = document.getElementById('reset');
 const leaderDiv = document.getElementById('leader');
-const tempoCompeticaoDiv = document.getElementById('tempoCompeticao');
-const selectJogadorInicio = document.getElementById('iniciarJogador');
+const avatarModal = document.getElementById('avatarModal');
+const avatarGallery = document.getElementById('avatarGallery');
+const customAvatarInput = document.getElementById('customAvatar');
 
 // Adicionar jogador
 addPlayerButton.addEventListener('click', () => {
     const nome = prompt("Digite o nome do jogador:");
     if (nome) {
-        jogadores.push({ nome, contador: 0 });
-        atualizarInterface();
-        atualizarSelectJogadorInicio();  // Atualiza a lista de jogadores para a escolha
+        // Abrir modal de seleção de avatar
+        avatarModal.style.display = 'block';
+        
+        // Esperar o jogador escolher o avatar
+        avatarGallery.addEventListener('click', function(e) {
+            if (e.target.classList.contains('avatar-option')) {
+                const avatar = e.target.getAttribute('data-avatar');
+                jogadores.push({ nome, contador: 0, avatar });
+                salvarDados(); // Salvar no localStorage
+                atualizarInterface();
+                avatarModal.style.display = 'none'; // Fechar o modal
+            }
+        });
+
+        // Adicionar avatar personalizado
+        customAvatarInput.addEventListener('change', function(e) {
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                jogadores.push({ nome, contador: 0, avatar: event.target.result });
+                salvarDados();
+                atualizarInterface();
+                avatarModal.style.display = 'none'; // Fechar o modal
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
     }
 });
 
@@ -24,8 +47,8 @@ addPlayerButton.addEventListener('click', () => {
 resetButton.addEventListener('click', () => {
     jogadores = [];
     totalPizzas = 0;
+    salvarDados(); // Salvar no localStorage
     atualizarInterface();
-    atualizarSelectJogadorInicio();  // Atualiza a lista de jogadores para a escolha
 });
 
 // Atualizar interface
@@ -47,6 +70,7 @@ function atualizarInterface() {
         const playerDiv = document.createElement('div');
         playerDiv.classList.add('player');
         playerDiv.innerHTML = `
+            <img src="${jogador.avatar}" alt="Avatar de ${jogador.nome}" class="player-avatar">
             <span>${jogador.nome}: ${jogador.contador} pedaços</span>
             <button onclick="adicionarPeca(${index})">+1</button>
             <div class="progress-bar-container">
@@ -66,26 +90,12 @@ function atualizarInterface() {
     }
 }
 
-// Atualizar o select para escolher o jogador que vai começar
-function atualizarSelectJogadorInicio() {
-    selectJogadorInicio.innerHTML = '';  // Limpa as opções
-    jogadores.forEach((jogador, index) => {
-        const option = document.createElement('option');
-        option.value = index;
-        option.textContent = jogador.nome;
-        selectJogadorInicio.appendChild(option);
-    });
-}
-
 // Adicionar pedaço para um jogador
 function adicionarPeca(index) {
-    if (tempoJogador > 0) {  // Só adicionar pedaços se o tempo não tiver acabado
-        jogadores[index].contador++;
-        totalPizzas++;
-        atualizarInterface();
-    } else {
-        alert("O tempo acabou para esse jogador! A vez foi para o próximo.");
-    }
+    jogadores[index].contador++;
+    totalPizzas++;
+    salvarDados(); // Salvar no localStorage
+    atualizarInterface();
 }
 
 // Calcular progresso da barra (em %)
@@ -94,67 +104,16 @@ function calcularProgresso(pedacos) {
     return (pedacos / maiorConsumo) * 100;
 }
 
+// Salvar os dados no localStorage
+function salvarDados() {
+    localStorage.setItem('jogadores', JSON.stringify(jogadores));
+    localStorage.setItem('totalPizzas', totalPizzas);
+}
+
+// Função para fechar o modal
+function closeAvatarModal() {
+    avatarModal.style.display = 'none';
+}
+
 // Atualiza a interface inicialmente
 atualizarInterface();
-
-// Variáveis para o modo competição
-let jogadorAtual = 0;
-let tempoJogador = 10;  // Tempo de 10 segundos para cada jogador
-let interval;
-
-// Iniciar o modo competição
-function iniciarModoCompeticao() {
-    // Garantir que há jogadores suficientes
-    if (jogadores.length < 2) {
-        alert("Adicione pelo menos 2 jogadores para iniciar a competição!");
-        return;
-    }
-
-    // Verifica se o jogador de início foi selecionado
-    const jogadorSelecionado = selectJogadorInicio.value;
-    if (jogadorSelecionado === "") {
-        alert("Selecione o jogador que começará a competição.");
-        return;
-    }
-
-    jogadorAtual = parseInt(jogadorSelecionado);  // Define o jogador selecionado como o primeiro
-    tempoJogador = 10;  // Resetar o tempo do jogador
-    atualizarTempo();  // Atualizar o tempo na interface
-
-    // Iniciar o temporizador
-    interval = setInterval(function () {
-        tempoJogador--;
-        atualizarTempo();
-
-        if (tempoJogador <= 0) {
-            tempoJogador = 10;  // Resetar tempo para o próximo jogador
-            jogadorAtual++;
-
-            if (jogadorAtual >= jogadores.length) {
-                clearInterval(interval);
-                alert('Modo Competição finalizado!');
-                mostrarRanking();
-            }
-        }
-    }, 1000);
-}
-
-// Atualizar tempo na interface
-function atualizarTempo() {
-    tempoCompeticaoDiv.textContent = `Tempo para ${jogadores[jogadorAtual].nome}: ${tempoJogador}s`;
-}
-
-// Exibir ranking final
-function mostrarRanking() {
-    jogadores.sort((a, b) => b.contador - a.contador);  // Ordenar jogadores pelo número de pedaços
-    let ranking = 'Ranking:\n';
-    
-    jogadores.forEach((jogador, index) => {
-        ranking += `${index + 1}. ${jogador.nome}: ${jogador.contador} pedaços\n`;
-    });
-
-    alert(ranking);
-}
-
-// Iniciar o modo competição ao clicar no botão
-document.getElementById('modoCompeticaoBtn').addEventListener('click', iniciarModoCompeticao);

@@ -13,15 +13,6 @@
             <!-- Seção para o líder -->
             <div class="leader" id="leader">Ninguém está ganhando ainda!</div>
 
-            <!-- Seção para escolher o jogador que vai começar -->
-            <label for="iniciarJogador">Escolha quem começa: </label>
-            <select id="iniciarJogador">
-                <option value="">Selecione um jogador</option>
-            </select>
-
-            <!-- Botão para iniciar o modo competição -->
-            <button id="modoCompeticaoBtn">Iniciar Modo Competição</button>
-
             <!-- Exibição dos jogadores -->
             <div id="players"></div>
 
@@ -29,8 +20,17 @@
             <button id="addPlayer">Adicionar Jogador</button>
             <button id="reset">Reiniciar Contagem</button>
 
-            <!-- Exibição do tempo de competição -->
-            <div id="tempoCompeticao"></div>
+            <!-- Modal para selecionar o avatar -->
+            <div id="avatarModal" style="display: none;">
+                <h2>Escolha seu Avatar</h2>
+                <div id="avatarGallery">
+                    <img src="./img/avatar1.jpeg" alt="Avatar 1" class="avatar-option" data-avatar="avatar1.png">
+                    <img src="./img/avatar2.png" alt="Avatar 2" class="avatar-option" data-avatar="avatar2.png">
+                    <img src="./img/avatar3.jpg" alt="Avatar 3" class="avatar-option" data-avatar="avatar3.png">
+                    <input type="file" id="customAvatar" accept="image/*" />
+                </div>
+                <button onclick="closeAvatarModal()">Fechar</button>
+            </div>
         </div>
         <script src="script.js"></script>
     </body>
