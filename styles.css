@@ -65,37 +65,70 @@ button:hover {
     animation: fadeIn 2s ease-in-out;
 }
 
-/* Estilo dos Jogadores */
+/* Estilo do container de jogadores */
 .player {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    background: rgba(255, 215, 0, 0.6); /* Cor de queijo derretido */
+    justify-content: space-between;
+    background: #ffcc4d; /* Cor de queijo derretido */
     padding: 10px;
     margin: 10px 0;
     border-radius: 10px;
-    color: #8B4513;
-    animation: fadeIn 2s ease-in-out;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-family: 'Arial', sans-serif;
+    color: #8B4513; /* Cor de massa de pizza */
+    font-weight: bold;
 }
 
-/* Barra de Progresso */
-.progress-bar-container {
-    background: rgba(255, 255, 255, 0.2);
+/* Estilo dos avatares */
+.player-avatar {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    background: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px;
+    color: #d32f2f; /* Cor de molho de tomate */
+}
+
+/* Estilo do botão de adicionar pedaço */
+button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background: #d32f2f; /* Vermelho de molho de tomate */
+    color: white;
+    border: none;
     border-radius: 5px;
-    height: 20px;
-    margin: 10px 0;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.3s;
+}
+
+button:hover {
+    background: #a02424; /* Tomate mais escuro */
+    transform: scale(1.1);
+}
+
+/* Barra de progresso - fatia de pizza */
+.progress-bar-container {
+    width: 100%;
+    background: #f5e1a4; /* Massa de pizza */
+    border-radius: 5px;
+    height: 15px;
+    margin: 5px 0;
     position: relative;
     overflow: hidden;
 }
 
 .progress-bar {
-    background: #D32F2F; /* Molho de tomate */
+    background: #ff914d; /* Cor de queijo derretido */
     height: 100%;
     width: 0;
     transition: width 0.3s ease-out;
-    animation: progressAnimation 2s forwards;
     border-radius: 5px;
 }
+
 
 /* Estilo do Líder */
 .leader {
@@ -118,7 +151,7 @@ button:hover {
     display: flex;
     flex-direction: column;
     justify-content: center;
-    align-items: center;
+    align-ipltems: center;
     z-index: 100;
     padding: 20px;
     font-family: Arial, sans-serif;
