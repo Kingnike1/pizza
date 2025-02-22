@@ -1,3 +1,8 @@
+// Importando os módulos do Firebase
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
+import { getDatabase, ref, set, push, remove, onValue, update } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
+
+// Configuração do Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDU0_pk_UzpaudRkHAUkBDuvysWuAE1YEQ",
     authDomain: "pizza-88154.firebaseapp.com",
@@ -9,16 +14,15 @@ const firebaseConfig = {
 };
 
 // Inicializar Firebase
-firebase.initializeApp(firebaseConfig)
-const db = firebase.database()
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const jogadoresRef = ref(db, "jogadores");
+
 document.addEventListener("DOMContentLoaded", () => {
     if (typeof firebase === "undefined") {
         console.error("Firebase não foi carregado corretamente!");
         return;
     }
-
-    const db = firebase.database();
-    const jogadoresRef = db.ref("jogadores");
 
     // Elementos da página
     const playersDiv = document.getElementById('players');
@@ -29,7 +33,6 @@ document.addEventListener("DOMContentLoaded", () => {
     const avatarGallery = document.getElementById('avatarGallery');
     const customAvatarInput = document.getElementById('customAvatar');
 
-    // Variável para armazenar jogador temporário
     let jogadorAtual = null;
 
     // Garantir que o botão existe antes de adicionar evento
@@ -38,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
             const nome = prompt("Digite o nome do jogador:");
             if (nome) {
                 jogadorAtual = { nome, contador: 0, avatar: null };
-
                 if (avatarModal) {
                     avatarModal.style.display = 'block';
                 } else {
@@ -79,8 +81,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return;
         }
 
-        const novoJogador = jogadoresRef.push();
-        novoJogador.set(jogadorAtual)
+        const novoJogador = push(jogadoresRef);
+        set(novoJogador, jogadorAtual)
             .then(() => {
                 console.log("Jogador adicionado com sucesso:", jogadorAtual);
                 if (avatarModal) avatarModal.style.display = 'none';
@@ -92,7 +94,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     // Atualizar interface ao detectar mudanças no Firebase
-    jogadoresRef.on("value", (snapshot) => {
+    onValue(jogadoresRef, (snapshot) => {
         const jogadores = snapshot.val() ? Object.entries(snapshot.val()).map(([id, obj]) => ({ id, ...obj })) : [];
         atualizarInterface(jogadores);
     });
@@ -136,10 +138,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Adicionar pedaço no Firebase
     function adicionarPeca(jogadorId) {
-        const jogadorRef = db.ref(`jogadores/${jogadorId}`);
+        const jogadorRef = ref(db, `jogadores/${jogadorId}`);
         jogadorRef.once("value", (snapshot) => {
             const jogador = snapshot.val();
-            jogadorRef.update({ contador: (jogador.contador || 0) + 1 });
+            update(jogadorRef, { contador: (jogador.contador || 0) + 1 });
         });
     }
 
@@ -152,7 +154,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Resetar os dados
     if (resetButton) {
         resetButton.addEventListener('click', () => {
-            jogadoresRef.remove();
+            remove(jogadoresRef);
         });
     } else {
         console.error("Botão de reset não encontrado!");
