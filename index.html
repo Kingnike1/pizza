@@ -1,49 +1,55 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Contador Competitivo de Pizza</title>
-        <link rel="stylesheet" href="styles.css">
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-        <!-- Link para o Font Awesome -->
-    </head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Contador Competitivo de Pizza</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css"
+    />
+    <!-- Link para o Font Awesome -->
+  </head>
 
-    <body>
-        <div class="container">
-            <h1>Contador Competitivo de Pedaços de Pizza</h1>
+  <body>
+    <div class="container">
+      <h1>Contador Competitivo de Pedaços de Pizza</h1>
 
-            <!-- Seção para o líder -->
-            <div class="leader" id="leader">Ninguém está ganhando ainda!</div>
+      <!-- Seção para o líder -->
+      <div class="leader" id="leader">Ninguém está ganhando ainda!</div>
 
-            <!-- Exibição dos jogadores -->
-            <div id="players"></div>
+      <!-- Exibição dos jogadores -->
+      <div id="players"></div>
 
-            <!-- Botões para adicionar jogador e reiniciar a contagem -->
-            <button id="addPlayer">Adicionar Jogador</button>
-            <button id="reset">Reiniciar Contagem</button>
+      <!-- Botões para adicionar jogador e reiniciar a contagem -->
+      <button id="addPlayer">Adicionar Jogador</button>
+      <button id="reset">Reiniciar Contagem</button>
 
-            <!-- Modal para selecionar o avatar -->
-            <div id="avatarModal" style="display: none;">
-                <h2>Escolha seu Avatar</h2>
-                <div id="avatarGallery">
-                    <div class="avatar-option" data-avatar="fa-user">
-                        <i class="fas fa-user"></i> <!-- Ícone de usuário -->
-                    </div>
-                    <div class="avatar-option" data-avatar="fa-pizza-slice">
-                        <i class="fas fa-pizza-slice"></i>
-                        <!-- Ícone de fatia de pizza -->
-                    </div>
-                    <div class="avatar-option" data-avatar="fa-robot">
-                        <i class="fas fa-robot"></i> <!-- Ícone de robô -->
-                    </div>
-                    <input type="file" id="customAvatar" accept="image/*" />
-                </div>
-                <button onclick="closeAvatarModal()">Fechar</button>
-            </div>
-
+      <!-- Modal para selecionar o avatar -->
+      <div id="avatarModal" style="display: none">
+        <h2>Escolha seu Avatar</h2>
+        <div id="avatarGallery">
+          <div class="avatar-option" data-avatar="fa-user">
+            <i class="fas fa-user"></i>
+            <!-- Ícone de usuário -->
+          </div>
+          <div class="avatar-option" data-avatar="fa-pizza-slice">
+            <i class="fas fa-pizza-slice"></i>
+            <!-- Ícone de fatia de pizza -->
+          </div>
+          <div class="avatar-option" data-avatar="fa-robot">
+            <i class="fas fa-robot"></i>
+            <!-- Ícone de robô -->
+          </div>
+          <input type="file" id="customAvatar" accept="image/*" />
         </div>
-        <script src="script.js"></script>
-    </body>
+        <button onclick="closeAvatarModal()">Fechar</button>
+      </div>
+    </div>
+    <script src="firebase-config.js"></script>
+    <script src="script.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js"></script>
+  </body>
 </html>

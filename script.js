@@ -1,6 +1,4 @@
-// Dados iniciais
-let jogadores = JSON.parse(localStorage.getItem('jogadores')) || [];
-let totalPizzas = parseInt(localStorage.getItem('totalPizzas')) || 0;
+const jogadoresRef = db.ref("jogadores");
 
 // Elementos da página
 const playersDiv = document.getElementById('players');
@@ -11,7 +9,7 @@ const avatarModal = document.getElementById('avatarModal');
 const avatarGallery = document.getElementById('avatarGallery');
 const customAvatarInput = document.getElementById('customAvatar');
 
-// Variável para armazenar temporariamente o nome do jogador enquanto ele escolhe o avatar
+// Variável temporária para armazenar o jogador atual
 let jogadorAtual = null;
 
 // Abrir modal para selecionar avatar
@@ -26,8 +24,7 @@ addPlayerButton.addEventListener('click', () => {
 // Evento para escolher um avatar da galeria
 avatarGallery.addEventListener('click', (e) => {
     if (e.target.classList.contains('avatar-option')) {
-        const avatar = e.target.getAttribute('data-avatar');
-        jogadorAtual.avatar = avatar;
+        jogadorAtual.avatar = e.target.getAttribute('data-avatar');
         adicionarJogador();
     }
 });
@@ -42,33 +39,26 @@ customAvatarInput.addEventListener('change', function (e) {
     reader.readAsDataURL(e.target.files[0]);
 });
 
-// Função para adicionar o jogador e atualizar interface
+// Adicionar jogador no Firebase
 function adicionarJogador() {
-    if (jogadorAtual) {
-        jogadores.push(jogadorAtual);
-        salvarDados();
-        atualizarInterface();
-        avatarModal.style.display = 'none';
-        jogadorAtual = null;
-    }
+    const novoJogador = jogadoresRef.push();
+    novoJogador.set(jogadorAtual);
+    avatarModal.style.display = 'none';
 }
 
-// Reiniciar o contador
-resetButton.addEventListener('click', () => {
-    jogadores = [];
-    totalPizzas = 0;
-    salvarDados();
-    atualizarInterface();
+// Atualizar interface ao detectar mudanças no Firebase
+jogadoresRef.on("value", (snapshot) => {
+    const jogadores = snapshot.val() ? Object.entries(snapshot.val()).map(([id, obj]) => ({ id, ...obj })) : [];
+    atualizarInterface(jogadores);
 });
 
-// Atualizar a interface
-function atualizarInterface() {
+// Atualizar interface
+function atualizarInterface(jogadores) {
     playersDiv.innerHTML = '';
-
     let maiorContador = 0;
     let lideres = [];
 
-    jogadores.forEach((jogador, index) => {
+    jogadores.forEach((jogador) => {
         if (jogador.contador > maiorContador) {
             maiorContador = jogador.contador;
             lideres = [jogador.nome];
@@ -78,8 +68,6 @@ function atualizarInterface() {
 
         const playerDiv = document.createElement('div');
         playerDiv.classList.add('player');
-
-        // Verifica se o avatar é uma imagem personalizada ou um ícone do Font Awesome
         const avatarHTML = jogador.avatar.startsWith('data:image')
             ? `<img src="${jogador.avatar}" class="player-avatar" alt="Avatar">`
             : `<i class="fas ${jogador.avatar} player-avatar"></i>`;
@@ -87,49 +75,36 @@ function atualizarInterface() {
         playerDiv.innerHTML = `
             ${avatarHTML}
             <span>${jogador.nome}: ${jogador.contador} pedaços</span>
-            <button onclick="adicionarPeca(${index})">+1</button>
+            <button onclick="adicionarPeca('${jogador.id}')">+1</button>
             <div class="progress-bar-container">
-                <div class="progress-bar" style="width: ${calcularProgresso(jogador.contador)}%;"></div>
+                <div class="progress-bar" style="width: ${calcularProgresso(jogador.contador, jogadores)}%;"></div>
             </div>
         `;
-
         playersDiv.appendChild(playerDiv);
     });
 
     // Atualizar líder
-    if (lideres.length === 1) {
-        leaderDiv.textContent = `Líder: ${lideres[0]} com ${maiorContador} pedaços!`;
-    } else if (lideres.length > 1) {
-        leaderDiv.textContent = `Empate entre: ${lideres.join(", ")} com ${maiorContador} pedaços!`;
-    } else {
-        leaderDiv.textContent = "Ninguém está ganhando ainda!";
-    }
+    leaderDiv.textContent = lideres.length === 1 ? `Líder: ${lideres[0]} com ${maiorContador} pedaços!`
+        : lideres.length > 1 ? `Empate entre: ${lideres.join(", ")} com ${maiorContador} pedaços!`
+        : "Ninguém está ganhando ainda!";
 }
 
-// Adicionar pedaço para um jogador
-function adicionarPeca(index) {
-    jogadores[index].contador++;
-    totalPizzas++;
-    salvarDados();
-    atualizarInterface();
+// Adicionar pedaço no Firebase
+function adicionarPeca(jogadorId) {
+    const jogadorRef = db.ref(`jogadores/${jogadorId}`);
+    jogadorRef.once("value", (snapshot) => {
+        const jogador = snapshot.val();
+        jogadorRef.update({ contador: (jogador.contador || 0) + 1 });
+    });
 }
 
-// Calcular progresso da barra (em %)
-function calcularProgresso(pedacos) {
+// Calcular progresso da barra
+function calcularProgresso(pedacos, jogadores) {
     const maiorConsumo = Math.max(...jogadores.map(j => j.contador), 1);
     return (pedacos / maiorConsumo) * 100;
 }
 
-// Salvar os dados no localStorage
-function salvarDados() {
-    localStorage.setItem('jogadores', JSON.stringify(jogadores));
-    localStorage.setItem('totalPizzas', totalPizzas);
-}
-
-// Fechar modal manualmente
-function closeAvatarModal() {
-    avatarModal.style.display = 'none';
-}
-
-// Inicializar interface
-atualizarInterface();
+// Resetar os dados
+resetButton.addEventListener('click', () => {
+    jogadoresRef.remove();
+});
