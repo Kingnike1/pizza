@@ -1,4 +1,4 @@
-/* Animações */
+/* Animações Temáticas de Pizza */
 @keyframes fadeIn {
     0% { opacity: 0; }
     100% { opacity: 1; }
@@ -9,21 +9,21 @@
     to { width: 100%; }
 }
 
-/* Estilo geral */
+/* Estilo Geral da Página */
 body {
     font-family: 'Comic Sans MS', cursive, sans-serif;
     text-align: center;
-    background: linear-gradient(135deg, #ffcc00, #ff5733); /* Gradiente amarelo e vermelho (cores da pizza) */
-    color: white;
+    background: linear-gradient(135deg, #ffcc00, #ff6600); /* Queijo e massa */
+    color: #8B4513; /* Cor de massa de pizza */
     margin: 0;
     padding: 0;
 }
 
-/* Container principal */
+/* Container Principal */
 .container {
     margin: 30px auto;
     padding: 20px;
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.9);
     border-radius: 15px;
     max-width: 500px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
@@ -33,12 +33,18 @@ body {
     animation: fadeIn 2s ease-in-out;
 }
 
-/* Estilo dos botões */
+/* Estilo do Título */
+h1 {
+    color: #D32F2F; /* Cor de molho de tomate */
+    text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.3);
+}
+
+/* Estilo dos Botões */
 button {
     padding: 10px 15px;
     margin: 10px 5px;
     font-size: 16px;
-    background: #d35400; /* Cor de massa de pizza */
+    background: #D32F2F; /* Molho de tomate */
     color: white;
     border: none;
     border-radius: 5px;
@@ -48,31 +54,31 @@ button {
 }
 
 button:hover {
-    background: #a04000;
+    background: #B71C1C;
     transform: scale(1.1);
 }
 
-/* Contador */
+/* Estilo dos Contadores */
 .counter {
     font-size: 24px;
     margin: 20px 0;
     animation: fadeIn 2s ease-in-out;
 }
 
-/* Estilo dos jogadores */
+/* Estilo dos Jogadores */
 .player {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: rgba(255, 165, 0, 0.2); /* Cor laranja que lembra queijo derretido */
+    background: rgba(255, 215, 0, 0.6); /* Cor de queijo derretido */
     padding: 10px;
     margin: 10px 0;
     border-radius: 10px;
-    color: white;
+    color: #8B4513;
     animation: fadeIn 2s ease-in-out;
 }
 
-/* Barra de progresso */
+/* Barra de Progresso */
 .progress-bar-container {
     background: rgba(255, 255, 255, 0.2);
     border-radius: 5px;
@@ -83,7 +89,7 @@ button:hover {
 }
 
 .progress-bar {
-    background: #ffcc00; /* Cor de queijo */
+    background: #D32F2F; /* Molho de tomate */
     height: 100%;
     width: 0;
     transition: width 0.3s ease-out;
@@ -91,32 +97,13 @@ button:hover {
     border-radius: 5px;
 }
 
-/* Estilo do líder */
+/* Estilo do Líder */
 .leader {
     font-size: 20px;
     margin: 20px 0;
     font-weight: bold;
-    color: #fff;
+    color: #8B4513;
     animation: fadeIn 2s ease-in-out;
-}
-
-/* Estilo para o select */
-#iniciarJogador {
-    padding: 10px;
-    font-size: 16px;
-    background: #ff5733; /* Vermelho tomate */
-    color: white;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    width: 100%;
-    max-width: 300px;
-    margin: 10px 0;
-    transition: background 0.3s ease;
-}
-
-#iniciarJogador:hover {
-    background: #c70039;
 }
 
 /* Estilos do Modal de Avatar */
@@ -138,10 +125,11 @@ button:hover {
     animation: fadeIn 0.5s ease-out;
 }
 
-#avatarModal h2 {
-    font-size: 24px;
+#avatarGallery {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
     margin-bottom: 20px;
-    color: #ffcc00;
 }
 
 .avatar-option {
@@ -156,19 +144,42 @@ button:hover {
 }
 
 .avatar-option:hover {
-    background-color: #ff5733;
+    background-color: #D32F2F;
     transform: scale(1.1);
+}
+
+.avatar-option i {
+    font-size: 30px;
+    color: white;
+}
+
+#customAvatar {
+    background-color: #ffcc00;
+    border: none;
+    border-radius: 5px;
+    padding: 8px;
+    color: #8B4513;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    margin-top: 15px;
+}
+
+#customAvatar:hover {
+    background-color: #ffb300;
 }
 
 /* Media Queries para Responsividade */
 @media (max-width: 768px) {
-    .container { width: 90%; padding: 15px; }
-    button { font-size: 14px; padding: 8px 12px; }
-    .counter { font-size: 20px; }
+    .container {
+        width: 90%;
+        padding: 15px;
+    }
 }
 
 @media (max-width: 480px) {
-    .container { width: 100%; padding: 10px; }
-    button { font-size: 12px; padding: 6px 10px; }
-    .counter { font-size: 18px; }
+    .container {
+        width: 100%;
+        padding: 10px;
+    }
 }
