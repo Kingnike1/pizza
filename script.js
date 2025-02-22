@@ -1,8 +1,7 @@
-// Importando os módulos do Firebase
+// script.js
 import { initializeApp } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js';
 import { getDatabase, ref, set, push, remove, onValue, update } from 'https://www.gstatic.com/firebasejs/9.6.1/firebase-database.js';
 
-// Configuração do Firebase
 const firebaseConfig = {
     apiKey: "AIzaSyDU0_pk_UzpaudRkHAUkBDuvysWuAE1YEQ",
     authDomain: "pizza-88154.firebaseapp.com",
@@ -11,17 +10,15 @@ const firebaseConfig = {
     storageBucket: "pizza-88154.firebasestorage.app",
     messagingSenderId: "494260841198",
     appId: "1:494260841198:web:8576c107cebef0e0f461ff"
-  };
-// Inicializar Firebase
+};
+
+// Inicializar o Firebase e o Database
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const jogadoresRef = ref(db, "jogadores");
 
 document.addEventListener("DOMContentLoaded", () => {
-    if (typeof firebase === "undefined") {
-        console.error("Firebase não foi carregado corretamente!");
-        return;
-    }
+    // Remova a verificação de "firebase" global, pois ela não é necessária com módulos
 
     // Elementos da página
     const playersDiv = document.getElementById('players');
@@ -34,7 +31,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     let jogadorAtual = null;
 
-    // Garantir que o botão existe antes de adicionar evento
     if (addPlayerButton) {
         addPlayerButton.addEventListener('click', () => {
             const nome = prompt("Digite o nome do jogador:");
@@ -51,7 +47,6 @@ document.addEventListener("DOMContentLoaded", () => {
         console.error("Botão 'addPlayer' não encontrado!");
     }
 
-    // Evento para escolher avatar da galeria
     if (avatarGallery) {
         avatarGallery.addEventListener('click', (e) => {
             if (e.target.classList.contains('avatar-option')) {
@@ -61,7 +56,6 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Evento para avatar personalizado
     if (customAvatarInput) {
         customAvatarInput.addEventListener('change', function (e) {
             const reader = new FileReader();
@@ -73,13 +67,11 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-    // Adicionar jogador no Firebase
     function adicionarJogador() {
         if (!jogadorAtual || !jogadorAtual.nome) {
             console.error("Jogador inválido!");
             return;
         }
-
         const novoJogador = push(jogadoresRef);
         set(novoJogador, jogadorAtual)
             .then(() => {
@@ -92,13 +84,11 @@ document.addEventListener("DOMContentLoaded", () => {
             });
     }
 
-    // Atualizar interface ao detectar mudanças no Firebase
     onValue(jogadoresRef, (snapshot) => {
         const jogadores = snapshot.val() ? Object.entries(snapshot.val()).map(([id, obj]) => ({ id, ...obj })) : [];
         atualizarInterface(jogadores);
     });
 
-    // Atualizar interface
     function atualizarInterface(jogadores) {
         playersDiv.innerHTML = '';
         let maiorContador = 0;
@@ -129,28 +119,26 @@ document.addEventListener("DOMContentLoaded", () => {
             playersDiv.appendChild(playerDiv);
         });
 
-        // Atualizar líder
         leaderDiv.textContent = lideres.length === 1 ? `Líder: ${lideres[0]} com ${maiorContador} pedaços!`
             : lideres.length > 1 ? `Empate entre: ${lideres.join(", ")} com ${maiorContador} pedaços!`
             : "Ninguém está ganhando ainda!";
     }
 
-    // Adicionar pedaço no Firebase
-    function adicionarPeca(jogadorId) {
+    // Para atualizar o contador de pedaços
+    window.adicionarPeca = function (jogadorId) {
         const jogadorRef = ref(db, `jogadores/${jogadorId}`);
-        jogadorRef.once("value", (snapshot) => {
+        // Utilize uma leitura única para atualizar
+        onValue(jogadorRef, (snapshot) => {
             const jogador = snapshot.val();
             update(jogadorRef, { contador: (jogador.contador || 0) + 1 });
-        });
-    }
+        }, { onlyOnce: true });
+    };
 
-    // Calcular progresso da barra
     function calcularProgresso(pedacos, jogadores) {
         const maiorConsumo = Math.max(...jogadores.map(j => j.contador), 1);
         return (pedacos / maiorConsumo) * 100;
     }
 
-    // Resetar os dados
     if (resetButton) {
         resetButton.addEventListener('click', () => {
             remove(jogadoresRef);
