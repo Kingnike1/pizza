@@ -11,58 +11,63 @@ const avatarModal = document.getElementById('avatarModal');
 const avatarGallery = document.getElementById('avatarGallery');
 const customAvatarInput = document.getElementById('customAvatar');
 
-// Função para adicionar um jogador
+// Variável para armazenar temporariamente o nome do jogador enquanto ele escolhe o avatar
+let jogadorAtual = null;
+
+// Abrir modal para selecionar avatar
 addPlayerButton.addEventListener('click', () => {
     const nome = prompt("Digite o nome do jogador:");
     if (nome) {
-        // Abrir modal de seleção de avatar
+        jogadorAtual = { nome, contador: 0, avatar: null };
         avatarModal.style.display = 'block';
-
-        const selectAvatar = (e) => {
-            if (e.target.classList.contains('avatar-option')) {
-                const avatar = e.target.getAttribute('data-avatar');
-                jogadores.push({ nome, contador: 0, avatar });
-                salvarDados();  // Salvar dados após a seleção
-                atualizarInterface(); // Atualizar a interface
-                avatarModal.style.display = 'none'; // Fechar o modal
-                avatarGallery.removeEventListener('click', selectAvatar); // Remover o listener
-            }
-        };
-
-        // Adicionando listener para avatar
-        avatarGallery.addEventListener('click', selectAvatar);
-
-        // Adicionar avatar personalizado
-        customAvatarInput.addEventListener('change', function (e) {
-            const reader = new FileReader();
-            reader.onload = function (event) {
-                jogadores.push({ nome, contador: 0, avatar: event.target.result });
-                salvarDados();  // Salvar dados após avatar personalizado
-                atualizarInterface(); // Atualizar a interface
-                avatarModal.style.display = 'none'; // Fechar o modal
-            };
-            reader.readAsDataURL(e.target.files[0]);
-        });
     }
 });
+
+// Evento para escolher um avatar da galeria
+avatarGallery.addEventListener('click', (e) => {
+    if (e.target.classList.contains('avatar-option')) {
+        const avatar = e.target.getAttribute('data-avatar');
+        jogadorAtual.avatar = avatar;
+        adicionarJogador();
+    }
+});
+
+// Evento para escolher avatar personalizado (imagem)
+customAvatarInput.addEventListener('change', function (e) {
+    const reader = new FileReader();
+    reader.onload = function (event) {
+        jogadorAtual.avatar = event.target.result;
+        adicionarJogador();
+    };
+    reader.readAsDataURL(e.target.files[0]);
+});
+
+// Função para adicionar o jogador e atualizar interface
+function adicionarJogador() {
+    if (jogadorAtual) {
+        jogadores.push(jogadorAtual);
+        salvarDados();
+        atualizarInterface();
+        avatarModal.style.display = 'none';
+        jogadorAtual = null;
+    }
+}
 
 // Reiniciar o contador
 resetButton.addEventListener('click', () => {
     jogadores = [];
     totalPizzas = 0;
-    salvarDados();  // Salvar dados após reset
-    atualizarInterface();  // Atualizar a interface
+    salvarDados();
+    atualizarInterface();
 });
 
-// Função para atualizar a interface
+// Atualizar a interface
 function atualizarInterface() {
-    const fragment = document.createDocumentFragment();  // Criar fragmento para otimizar renderização
-    playersDiv.innerHTML = '';  // Limpar conteúdo anterior
+    playersDiv.innerHTML = '';
 
     let maiorContador = 0;
     let lideres = [];
 
-    // Criar os elementos dos jogadores
     jogadores.forEach((jogador, index) => {
         if (jogador.contador > maiorContador) {
             maiorContador = jogador.contador;
@@ -74,10 +79,13 @@ function atualizarInterface() {
         const playerDiv = document.createElement('div');
         playerDiv.classList.add('player');
 
-        const avatarIcon = jogador.avatar || "fa-user"; // Avatar ou ícone padrão
-        
+        // Verifica se o avatar é uma imagem personalizada ou um ícone do Font Awesome
+        const avatarHTML = jogador.avatar.startsWith('data:image')
+            ? `<img src="${jogador.avatar}" class="player-avatar" alt="Avatar">`
+            : `<i class="fas ${jogador.avatar} player-avatar"></i>`;
+
         playerDiv.innerHTML = `
-            <i class="fas ${avatarIcon} player-avatar"></i>
+            ${avatarHTML}
             <span>${jogador.nome}: ${jogador.contador} pedaços</span>
             <button onclick="adicionarPeca(${index})">+1</button>
             <div class="progress-bar-container">
@@ -85,12 +93,8 @@ function atualizarInterface() {
             </div>
         `;
 
-        // Adicionar o novo playerDiv ao fragmento
-        fragment.appendChild(playerDiv);
+        playersDiv.appendChild(playerDiv);
     });
-
-    // Atualizar o conteúdo da div 'players' com o fragmento
-    playersDiv.appendChild(fragment);
 
     // Atualizar líder
     if (lideres.length === 1) {
@@ -106,8 +110,8 @@ function atualizarInterface() {
 function adicionarPeca(index) {
     jogadores[index].contador++;
     totalPizzas++;
-    salvarDados();  // Salvar dados após adição
-    atualizarInterface();  // Atualizar a interface
+    salvarDados();
+    atualizarInterface();
 }
 
 // Calcular progresso da barra (em %)
@@ -118,15 +122,14 @@ function calcularProgresso(pedacos) {
 
 // Salvar os dados no localStorage
 function salvarDados() {
-    // O salvamento pode ser otimizado mais adiante para ser menos frequente
     localStorage.setItem('jogadores', JSON.stringify(jogadores));
     localStorage.setItem('totalPizzas', totalPizzas);
 }
 
-// Função para fechar o modal
+// Fechar modal manualmente
 function closeAvatarModal() {
     avatarModal.style.display = 'none';
 }
 
-// Atualiza a interface inicialmente
+// Inicializar interface
 atualizarInterface();
