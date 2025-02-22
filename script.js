@@ -1,110 +1,147 @@
-const jogadoresRef = db.ref("jogadores");
-
-// Elementos da página
-const playersDiv = document.getElementById('players');
-const addPlayerButton = document.getElementById('addPlayer');
-const resetButton = document.getElementById('reset');
-const leaderDiv = document.getElementById('leader');
-const avatarModal = document.getElementById('avatarModal');
-const avatarGallery = document.getElementById('avatarGallery');
-const customAvatarInput = document.getElementById('customAvatar');
-
-// Variável temporária para armazenar o jogador atual
-let jogadorAtual = null;
-
-// Abrir modal para selecionar avatar
-addPlayerButton.addEventListener('click', () => {
-    const nome = prompt("Digite o nome do jogador:");
-    if (nome) {
-        jogadorAtual = { nome, contador: 0, avatar: null };
-        avatarModal.style.display = 'block';
+document.addEventListener("DOMContentLoaded", () => {
+    if (typeof firebase === "undefined") {
+        console.error("Firebase não foi carregado corretamente!");
+        return;
     }
-});
 
-// Evento para escolher um avatar da galeria
-avatarGallery.addEventListener('click', (e) => {
-    if (e.target.classList.contains('avatar-option')) {
-        jogadorAtual.avatar = e.target.getAttribute('data-avatar');
-        adicionarJogador();
+    const db = firebase.database();
+    const jogadoresRef = db.ref("jogadores");
+
+    // Elementos da página
+    const playersDiv = document.getElementById('players');
+    const addPlayerButton = document.getElementById('addPlayer');
+    const resetButton = document.getElementById('reset');
+    const leaderDiv = document.getElementById('leader');
+    const avatarModal = document.getElementById('avatarModal');
+    const avatarGallery = document.getElementById('avatarGallery');
+    const customAvatarInput = document.getElementById('customAvatar');
+
+    // Variável para armazenar jogador temporário
+    let jogadorAtual = null;
+
+    // Garantir que o botão existe antes de adicionar evento
+    if (addPlayerButton) {
+        addPlayerButton.addEventListener('click', () => {
+            const nome = prompt("Digite o nome do jogador:");
+            if (nome) {
+                jogadorAtual = { nome, contador: 0, avatar: null };
+
+                if (avatarModal) {
+                    avatarModal.style.display = 'block';
+                } else {
+                    console.error("Elemento avatarModal não encontrado.");
+                }
+            }
+        });
+    } else {
+        console.error("Botão 'addPlayer' não encontrado!");
     }
-});
 
-// Evento para escolher avatar personalizado (imagem)
-customAvatarInput.addEventListener('change', function (e) {
-    const reader = new FileReader();
-    reader.onload = function (event) {
-        jogadorAtual.avatar = event.target.result;
-        adicionarJogador();
-    };
-    reader.readAsDataURL(e.target.files[0]);
-});
+    // Evento para escolher avatar da galeria
+    if (avatarGallery) {
+        avatarGallery.addEventListener('click', (e) => {
+            if (e.target.classList.contains('avatar-option')) {
+                jogadorAtual.avatar = e.target.getAttribute('data-avatar');
+                adicionarJogador();
+            }
+        });
+    }
 
-// Adicionar jogador no Firebase
-function adicionarJogador() {
-    const novoJogador = jogadoresRef.push();
-    novoJogador.set(jogadorAtual);
-    avatarModal.style.display = 'none';
-}
+    // Evento para avatar personalizado
+    if (customAvatarInput) {
+        customAvatarInput.addEventListener('change', function (e) {
+            const reader = new FileReader();
+            reader.onload = function (event) {
+                jogadorAtual.avatar = event.target.result;
+                adicionarJogador();
+            };
+            reader.readAsDataURL(e.target.files[0]);
+        });
+    }
 
-// Atualizar interface ao detectar mudanças no Firebase
-jogadoresRef.on("value", (snapshot) => {
-    const jogadores = snapshot.val() ? Object.entries(snapshot.val()).map(([id, obj]) => ({ id, ...obj })) : [];
-    atualizarInterface(jogadores);
-});
-
-// Atualizar interface
-function atualizarInterface(jogadores) {
-    playersDiv.innerHTML = '';
-    let maiorContador = 0;
-    let lideres = [];
-
-    jogadores.forEach((jogador) => {
-        if (jogador.contador > maiorContador) {
-            maiorContador = jogador.contador;
-            lideres = [jogador.nome];
-        } else if (jogador.contador === maiorContador && maiorContador > 0) {
-            lideres.push(jogador.nome);
+    // Adicionar jogador no Firebase
+    function adicionarJogador() {
+        if (!jogadorAtual || !jogadorAtual.nome) {
+            console.error("Jogador inválido!");
+            return;
         }
 
-        const playerDiv = document.createElement('div');
-        playerDiv.classList.add('player');
-        const avatarHTML = jogador.avatar.startsWith('data:image')
-            ? `<img src="${jogador.avatar}" class="player-avatar" alt="Avatar">`
-            : `<i class="fas ${jogador.avatar} player-avatar"></i>`;
+        const novoJogador = jogadoresRef.push();
+        novoJogador.set(jogadorAtual)
+            .then(() => {
+                console.log("Jogador adicionado com sucesso:", jogadorAtual);
+                if (avatarModal) avatarModal.style.display = 'none';
+                jogadorAtual = null;
+            })
+            .catch(error => {
+                console.error("Erro ao adicionar jogador:", error);
+            });
+    }
 
-        playerDiv.innerHTML = `
-            ${avatarHTML}
-            <span>${jogador.nome}: ${jogador.contador} pedaços</span>
-            <button onclick="adicionarPeca('${jogador.id}')">+1</button>
-            <div class="progress-bar-container">
-                <div class="progress-bar" style="width: ${calcularProgresso(jogador.contador, jogadores)}%;"></div>
-            </div>
-        `;
-        playersDiv.appendChild(playerDiv);
+    // Atualizar interface ao detectar mudanças no Firebase
+    jogadoresRef.on("value", (snapshot) => {
+        const jogadores = snapshot.val() ? Object.entries(snapshot.val()).map(([id, obj]) => ({ id, ...obj })) : [];
+        atualizarInterface(jogadores);
     });
 
-    // Atualizar líder
-    leaderDiv.textContent = lideres.length === 1 ? `Líder: ${lideres[0]} com ${maiorContador} pedaços!`
-        : lideres.length > 1 ? `Empate entre: ${lideres.join(", ")} com ${maiorContador} pedaços!`
-        : "Ninguém está ganhando ainda!";
-}
+    // Atualizar interface
+    function atualizarInterface(jogadores) {
+        playersDiv.innerHTML = '';
+        let maiorContador = 0;
+        let lideres = [];
 
-// Adicionar pedaço no Firebase
-function adicionarPeca(jogadorId) {
-    const jogadorRef = db.ref(`jogadores/${jogadorId}`);
-    jogadorRef.once("value", (snapshot) => {
-        const jogador = snapshot.val();
-        jogadorRef.update({ contador: (jogador.contador || 0) + 1 });
-    });
-}
+        jogadores.forEach((jogador) => {
+            if (jogador.contador > maiorContador) {
+                maiorContador = jogador.contador;
+                lideres = [jogador.nome];
+            } else if (jogador.contador === maiorContador && maiorContador > 0) {
+                lideres.push(jogador.nome);
+            }
 
-// Calcular progresso da barra
-function calcularProgresso(pedacos, jogadores) {
-    const maiorConsumo = Math.max(...jogadores.map(j => j.contador), 1);
-    return (pedacos / maiorConsumo) * 100;
-}
+            const playerDiv = document.createElement('div');
+            playerDiv.classList.add('player');
+            const avatarHTML = jogador.avatar.startsWith('data:image')
+                ? `<img src="${jogador.avatar}" class="player-avatar" alt="Avatar">`
+                : `<i class="fas ${jogador.avatar} player-avatar"></i>`;
 
-// Resetar os dados
-resetButton.addEventListener('click', () => {
-    jogadoresRef.remove();
+            playerDiv.innerHTML = `
+                ${avatarHTML}
+                <span>${jogador.nome}: ${jogador.contador} pedaços</span>
+                <button onclick="adicionarPeca('${jogador.id}')">+1</button>
+                <div class="progress-bar-container">
+                    <div class="progress-bar" style="width: ${calcularProgresso(jogador.contador, jogadores)}%;"></div>
+                </div>
+            `;
+            playersDiv.appendChild(playerDiv);
+        });
+
+        // Atualizar líder
+        leaderDiv.textContent = lideres.length === 1 ? `Líder: ${lideres[0]} com ${maiorContador} pedaços!`
+            : lideres.length > 1 ? `Empate entre: ${lideres.join(", ")} com ${maiorContador} pedaços!`
+            : "Ninguém está ganhando ainda!";
+    }
+
+    // Adicionar pedaço no Firebase
+    function adicionarPeca(jogadorId) {
+        const jogadorRef = db.ref(`jogadores/${jogadorId}`);
+        jogadorRef.once("value", (snapshot) => {
+            const jogador = snapshot.val();
+            jogadorRef.update({ contador: (jogador.contador || 0) + 1 });
+        });
+    }
+
+    // Calcular progresso da barra
+    function calcularProgresso(pedacos, jogadores) {
+        const maiorConsumo = Math.max(...jogadores.map(j => j.contador), 1);
+        return (pedacos / maiorConsumo) * 100;
+    }
+
+    // Resetar os dados
+    if (resetButton) {
+        resetButton.addEventListener('click', () => {
+            jogadoresRef.remove();
+        });
+    } else {
+        console.error("Botão de reset não encontrado!");
+    }
 });
