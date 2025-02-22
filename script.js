@@ -11,8 +11,7 @@ const firebaseConfig = {
     storageBucket: "pizza-88154.firebasestorage.app",
     messagingSenderId: "494260841198",
     appId: "1:494260841198:web:8576c107cebef0e0f461ff"
-};
-
+  };
 // Inicializar Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
